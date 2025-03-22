@@ -4,6 +4,11 @@ from calculator.command import Command
 from calculator.command_input import CommandInput
 
 
+class CLIExit(Exception):
+    """Exit command line via an exception (EAFP)"""
+    pass
+
+
 class CLIError(Exception):
     """Base exception class for command line interactions"""
     pass
