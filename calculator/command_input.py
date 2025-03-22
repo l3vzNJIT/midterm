@@ -10,6 +10,7 @@ class CommandInput():
         """Initializes a command input object by parsing an input string"""
         self.input_string = input_string
         self.parse_input()
+        self.time = datetime.datetime.now()
         logging.debug(f"CommandInput received: {self.__dict__}")
 
     @staticmethod
