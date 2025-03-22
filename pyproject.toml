@@ -5,6 +5,9 @@ version = "1.0.0"
 [project.entry-points."calculator.commands"]
 add_plugin = "calculator.commands.add.add:Add"
 
+[project.scripts]
+run_calculator = "calculator.main:main"
+
 [build-system]
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
