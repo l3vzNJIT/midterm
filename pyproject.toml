@@ -1,0 +1,19 @@
+[project]
+name = "calculator"
+version = "1.0.0"
+
+#[project.entry-points."calculator.plugins"]
+#add_plugin = "app.plugins.add:Add"
+#subtract_plugin = "app.plugins.subtract:Subtract"
+#multiply_plugin = "app.plugins.multiply:Multiply"
+#divide_plugin = "app.plugins.divide:Divide"
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+[tool.pylint.'MESSAGES CONTROL']
+disable = ["unnecessary-ellipsis", "unnecessary-pass", "logging-fstring-interpolation"]
