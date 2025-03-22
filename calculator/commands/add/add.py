@@ -21,11 +21,13 @@ class Add(Command):
         self.cmd = cmd
         logging.debug("Add plugin object initialized")
 
+
     @classmethod
     def in_scope(cls, cmd: CommandInput) -> bool:
         """Return T/F if the command is in this plugin's scope"""
         logging.debug(f"Add plugin scope check for {cmd.command}")
         return bool(cls.COMMAND_PATTERN.match(cmd.command))
+
 
     def execute(self) -> CommandOutput:
         """Add arguments together, return CommandOutput with sum"""

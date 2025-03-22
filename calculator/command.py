@@ -16,6 +16,7 @@ class Command(ABC):
         """Validates if this plugin handles the given input"""
         raise NotImplementedError("in_scope must be implemented by subclass")
 
+
     @abstractmethod
     def execute(self) -> CommandOutput:
         """Executes the functionality of this command"""
