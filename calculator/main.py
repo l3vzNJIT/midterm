@@ -1,3 +1,5 @@
+"""Module containing main function and application set up"""
+
 import os
 import logging
 import logging.config
