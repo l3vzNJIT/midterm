@@ -29,7 +29,7 @@ class Invoker():
         """Select which plugin should be used for command execution"""
         command_choices = []
         for pc in self.commands:
-            if pc.is_valid(cmd):
+            if pc.in_scope(cmd):
                 command_choices.append(pc)
 
         if len(command_choices) > 1:
@@ -38,6 +38,7 @@ class Invoker():
         if len(command_choices) == 0:
             raise MissingCommandError(cmd)
 
+        logging.debug(f"Chose {command_choices[0]} for {cmd.command} command")
         return command_choices[0]
 
 
@@ -48,4 +49,4 @@ class Invoker():
 
     def execute_command(self, cmd: CommandInput) -> CommandOutput:
         """Execute plugin command"""
-        return self._choose_command(cmd).execute()
+        return self._choose_command(cmd)(cmd).execute()
