@@ -33,7 +33,7 @@ def pytest_generate_tests(metafunc):
     """Auto-generate parametrizations via hook in pytest"""
     num_records = int(metafunc.config.getoption("--num_records"))
 
-    # cli_input is used for testing command input
+    # cli_input is used for testing command input and output
     if "cli_input" in metafunc.fixturenames:
         cli_input_data = [gen_rnd_cmd() for _ in range(num_records)]
         metafunc.parametrize("cli_input", cli_input_data)
