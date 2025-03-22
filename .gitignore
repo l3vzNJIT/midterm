@@ -1,0 +1,17 @@
+# vi temporary files
+*.sw*
+# python virtualenv
+venv/
+# pytest
+.pytest_cache
+# code coverage tests
+.coverage
+# bytecode compiled modules
+__pycache__/
+# setuptools and wheel metadata
+*.egg-info/
+build/
+# environment variables
+.env
+# logs
+logs/
