@@ -2,8 +2,8 @@
 name = "calculator"
 version = "1.0.0"
 
-#[project.entry-points."calculator.plugins"]
-#add_plugin = "app.plugins.add:Add"
+[project.entry-points."calculator.plugins"]
+add_plugin = "calculator.commands.add.add:Add"
 #subtract_plugin = "app.plugins.subtract:Subtract"
 #multiply_plugin = "app.plugins.multiply:Multiply"
 #divide_plugin = "app.plugins.divide:Divide"
