@@ -13,10 +13,12 @@ class CommandInput():
         self.time = datetime.datetime.now()
         logging.debug(f"CommandInput received: {self.__dict__}")
 
+
     @staticmethod
     def get_token(line: str) -> str:
         """Generates tokens defined to be non-whitespace components of a string"""
         yield from line.split()
+
 
     def parse_input(self) -> None:
         """Parses input string into a command and a dict of arguments"""

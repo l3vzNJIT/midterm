@@ -11,6 +11,7 @@ class DummyCommand(Command):
     def in_scope(cls, cmd):
         return super().in_scope(cmd)
 
+
     def execute(self):  # pylint: disable=useless-parent-delegation
         return super().execute()
 

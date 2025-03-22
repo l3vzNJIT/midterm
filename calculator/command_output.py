@@ -12,8 +12,10 @@ class CommandOutput():
         self.time = datetime.datetime.now()
         logging.debug(f"CommandOutput recieved: {self.__dict__}")
 
+
     def __str__(self) -> str:
         return str(self.output)
+
 
     def get_stats(self) -> str:
         """Show stats about the command execution"""
