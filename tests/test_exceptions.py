@@ -7,6 +7,7 @@ from calculator.exceptions import (
     AmbiguousCommandError,
     MissingCommandError,
 )
+from calculator.commands.add.exceptions import InvalidAdditionArguments
 from calculator.command_input import CommandInput
 from calculator.command import Command
 
@@ -51,3 +52,13 @@ def test_missing_command_error_message():
     assert isinstance(error, CLIError)
     assert "not in scope" in str(error)
     assert "blah" in str(error)
+
+
+def test_addition_validation():
+    """Test invalid arguments for addition"""
+    bad_args = ["x", "y"]
+    error = InvalidAdditionArguments(bad_args)
+
+    assert isinstance(error, CLIError)
+    assert "x" in str(error)
+    assert "y" in str(error)
