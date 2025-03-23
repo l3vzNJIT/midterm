@@ -4,6 +4,7 @@ version = "1.0.0"
 
 [project.entry-points."calculator.commands"]
 add_plugin = "calculator.commands.add.add:Add"
+subtract_plugin = "calculator.commands.subtract.subtract:Subtract"
 
 [project.scripts]
 run_calculator = "calculator.main:main"
@@ -16,4 +17,7 @@ build-backend = "setuptools.build_meta"
 where = ["."]
 
 [tool.pylint.'MESSAGES CONTROL']
-disable = ["unnecessary-ellipsis", "unnecessary-pass", "logging-fstring-interpolation"]
+disable = ["unnecessary-ellipsis",
+            "unnecessary-pass",
+            "logging-fstring-interpolation",
+            "duplicate-code"]
