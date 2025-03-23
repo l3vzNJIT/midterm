@@ -17,6 +17,7 @@ def setup_env() -> None:
     log_config = base_path / log_config_name
     logs_path = base_path.parent / log_dir_name
     history_path = base_path.parent / os.getenv("HISTORY_DIR_NAME")
+    os.environ["HISTORY_FILE"] = str(history_path / os.getenv("HISTORY_NAME"))
     os.makedirs(logs_path, exist_ok = True)
     os.makedirs(history_path, exist_ok = True)
 
