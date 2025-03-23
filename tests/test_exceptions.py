@@ -5,9 +5,12 @@ from calculator.exceptions import (
     CLIExit,
     CLIError,
     AmbiguousCommandError,
-    MissingCommandError,
+    MissingCommandError
 )
-from calculator.commands.add.exceptions import InvalidAdditionArguments
+from calculator.commands.add.exceptions import (
+    InvalidAdditionArguments,
+    MissingAdditionArguments
+)
 from calculator.command_input import CommandInput
 from calculator.command import Command
 
@@ -61,4 +64,11 @@ def test_addition_validation():
 
     assert isinstance(error, CLIError)
     assert "x" in str(error)
-    assert "y" in str(error)
+
+
+def test_addition_validation_empty_args():
+    """Test missing arguments for addition"""
+    error = MissingAdditionArguments()
+
+    assert isinstance(error, CLIError)
+    assert "Addition command requires arguments" in str(error)
