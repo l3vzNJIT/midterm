@@ -26,6 +26,7 @@ def test_setup_env_configures_logging(
         "LOG_NAME": "app.log",
         "LOG_DIR_NAME": "logs",
         "LOG_CONFIG_NAME": "logging.conf",
+        "HISTORY_DIR_NAME": "history"
     }.get(key, default)
 
     setup_env()
@@ -35,6 +36,8 @@ def test_setup_env_configures_logging(
     mock_getenv.assert_any_call("LOG_NAME")
     mock_getenv.assert_any_call("LOG_DIR_NAME")
     mock_getenv.assert_any_call("LOG_CONFIG_NAME")
-    mock_makedirs.assert_called_once()
+    mock_getenv.assert_any_call("LOG_LEVEL", "INFO")
+    mock_getenv.assert_any_call("HISTORY_DIR_NAME")
+    assert mock_makedirs.call_count == 2
     mock_file_config.assert_called_once()
     mock_debug.assert_called_once_with("Initialized environment")

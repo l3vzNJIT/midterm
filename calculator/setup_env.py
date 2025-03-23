@@ -16,15 +16,17 @@ def setup_env() -> None:
     log_config_name = os.getenv("LOG_CONFIG_NAME")
     log_config = base_path / log_config_name
     logs_path = base_path.parent / log_dir_name
+    history_path = base_path.parent / os.getenv("HISTORY_DIR_NAME")
+    os.makedirs(logs_path, exist_ok = True)
+    os.makedirs(history_path, exist_ok = True)
 
     # set up logging
-    os.makedirs(logs_path, exist_ok = True)
     logging.config.fileConfig(
         str(log_config),
         defaults={"logs_path": str(logs_path / log_name)}
     )
-    # Get level from environment, default to INFO
     log_level_str = os.getenv("LOG_LEVEL", "INFO").upper()
     log_level = getattr(logging, log_level_str, logging.INFO)
     logging.getLogger().setLevel(log_level)
+
     logging.debug("Initialized environment")
