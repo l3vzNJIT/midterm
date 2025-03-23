@@ -46,7 +46,6 @@ class Add(Command):
             raise InvalidAdditionArguments(bad_args)
 
 
-
     def execute(self) -> CommandOutput:
         """Add arguments together, return CommandOutput with sum"""
         logging.debug(f"Adding {self.cmd.args.values()}")

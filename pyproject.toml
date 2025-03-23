@@ -5,6 +5,7 @@ version = "1.0.0"
 [project.entry-points."calculator.commands"]
 add_plugin = "calculator.commands.add.add:Add"
 subtract_plugin = "calculator.commands.subtract.subtract:Subtract"
+multiply_plugin = "calculator.commands.multiply.multiply:Multiply"
 
 [project.scripts]
 run_calculator = "calculator.main:main"
