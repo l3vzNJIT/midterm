@@ -8,3 +8,10 @@ class InvalidAdditionArguments(CLIError):
     def __init__(self, args: list[str]) -> None:
         error_msg = f"Arguments not convertable to Decimal: {args}"
         super().__init__(error_msg)
+
+
+class MissingAdditionArguments(CLIError):
+    """Error to raise when invalid arguments are passed"""
+    def __init__(self) -> None:
+        error_msg = "Addition command requires arguments"
+        super().__init__(error_msg)

@@ -33,7 +33,7 @@ def gen_rnd_cmd():
 def gen_add_cmd():
     """Generates a random addition command with random arguments and argument count"""
     fake = Faker()
-    fake_command = {"command": "add", "num_args": fake.random_digit()}
+    fake_command = {"command": "add", "num_args": fake.random_int(min=1, max=100)}
     args = []
     fake_command["args"] = {}
 

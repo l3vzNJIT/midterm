@@ -5,7 +5,10 @@ import pytest
 from calculator.command_input import CommandInput
 from calculator.command_output import CommandOutput
 from calculator.commands.add.add import Add
-from calculator.commands.add.exceptions import InvalidAdditionArguments
+from calculator.commands.add.exceptions import (
+    InvalidAdditionArguments,
+    MissingAdditionArguments
+)
 
 
 @pytest.mark.parametrize("cmd", ["add", "Add", "+", "plus", "addItion"])
@@ -19,6 +22,12 @@ def test_invalid_argument_strings(cmd_args):
     """Verify bad arguments are caught"""
     with pytest.raises(InvalidAdditionArguments):
         Add(CommandInput(cmd_args)).validate()
+
+
+def test_missing_argument_strings():
+    """Verify empty arguments are caught"""
+    with pytest.raises(MissingAdditionArguments):
+        Add(CommandInput("add")).validate()
 
 
 @pytest.mark.parametrize("cmd_args", ["add 1 2", "add -10 5 4", "add -0 0 -0 0"])

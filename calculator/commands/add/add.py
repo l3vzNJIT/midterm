@@ -9,7 +9,7 @@ from decimal import Decimal, InvalidOperation
 from calculator.command import Command
 from calculator.command_input import CommandInput
 from calculator.command_output import CommandOutput
-from calculator.commands.add.exceptions import InvalidAdditionArguments
+from calculator.commands.add.exceptions import InvalidAdditionArguments, MissingAdditionArguments
 
 
 class Add(Command):
@@ -32,8 +32,10 @@ class Add(Command):
 
     def validate(self) -> None:
         """Verify arguments are valid decimals - LBYL"""
-        bad_args = []
+        if len(self.cmd.args.keys()) == 0:
+            raise MissingAdditionArguments
 
+        bad_args = []
         for arg_value in self.cmd.args.values():
             try:
                 Decimal(arg_value)
@@ -49,11 +51,7 @@ class Add(Command):
         """Add arguments together, return CommandOutput with sum"""
         logging.debug(f"Adding {self.cmd.args.values()}")
 
-        if self.cmd.num_args == 0:
-            out_sum = None
-        else:
-            out_sum = Decimal(0)
-
+        out_sum = Decimal(0)
         for i in range(1, self.cmd.num_args + 1):
             out_sum += Decimal(self.cmd.args[f"argument_{i}"])
 
