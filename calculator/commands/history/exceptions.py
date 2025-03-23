@@ -1,7 +1,6 @@
-"""Module for Add plugin command exceptions"""
+"""Module for history plugin command exceptions"""
 
 from calculator.exceptions import CLIError
-
 
 
 class HistoryOverflow(CLIError):
