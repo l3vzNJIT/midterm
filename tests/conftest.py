@@ -33,7 +33,23 @@ def gen_rnd_cmd():
 def gen_add_cmd():
     """Generates a random addition command with random arguments and argument count"""
     fake = Faker()
-    fake_command = {"command": "add", "num_args": fake.random_int(min=1, max=100)}
+    fake_command = {"command": "add", "num_args": fake.random_int(min=2, max=100)}
+    args = []
+    fake_command["args"] = {}
+
+    for i in range(1, fake_command["num_args"] + 1):
+        fake_command["args"][f"argument_{i}"] = str(fake.random_int(min=-10000, max=10000))
+        args.append(fake_command["args"][f"argument_{i}"])
+
+    fake_command["input_str"] = " ".join([fake_command["command"]] + args)
+
+    return CommandInput(fake_command["input_str"])
+
+
+def gen_sub_cmd():
+    """Generates a random subtraction command with random arguments and argument count"""
+    fake = Faker()
+    fake_command = {"command": "sub", "num_args": fake.random_int(min=2, max=100)}
     args = []
     fake_command["args"] = {}
 
@@ -59,3 +75,8 @@ def pytest_generate_tests(metafunc):
     if "add_input" in metafunc.fixturenames:
         add_data = [gen_add_cmd() for _ in range(num_records)]
         metafunc.parametrize("add_input", add_data)
+
+    # subtraction tests
+    if "sub_input" in metafunc.fixturenames:
+        sub_data = [gen_sub_cmd() for _ in range(num_records)]
+        metafunc.parametrize("sub_input", sub_data)
