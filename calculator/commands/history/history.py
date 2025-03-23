@@ -21,6 +21,16 @@ class History():
 
 
     @staticmethod
+    def autosave(method):
+        """Decorator to automatically save history after modifying it"""
+        def wrapper(self, *args, **kwargs):
+            result = method(self, *args, **kwargs)
+            self.save_history()
+            return result
+        return wrapper
+
+
+    @staticmethod
     def form_history_record(cmd_in: CommandInput, cmd_out: CommandOutput) -> dict:
         """Format command input/output pair into a record for a dataframe"""
         record = {
@@ -55,6 +65,7 @@ class History():
             raise HistoryOverflow
 
 
+    @autosave
     def add(self, cmd_in: CommandInput, cmd_out: CommandOutput) -> None:
         """Add a new entry into history - EAFP"""
         record = self.form_history_record(cmd_in, cmd_out)
@@ -82,6 +93,7 @@ class History():
 
     def save_history(self):
         """Persist history data frame"""
+        logging.debug("Updating history file")
         self.history.to_csv(self.history_file, index=False)
 
 
