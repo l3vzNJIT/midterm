@@ -14,7 +14,7 @@ class HistoryPrint(Command):
     """Handles printing of history to terminal"""
     # command string regex this plugin will be responsible for
     # ignore leading whitespace, make it case insensitive
-    COMMAND_PATTERN = re.compile(r"^\s*history$", re.IGNORECASE)
+    COMMAND_PATTERN = re.compile(r"^\s*history\s*$", re.IGNORECASE)
 
     def __init__(self, cmd: CommandInput) -> None:
         self.cmd = cmd
