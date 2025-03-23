@@ -11,6 +11,10 @@ from calculator.commands.add.exceptions import (
     InvalidAdditionArguments,
     MissingAdditionArguments
 )
+from calculator.commands.subtract.exceptions import (
+    InvalidSubtractionArguments,
+    MissingSubtractionArguments
+)
 from calculator.command_input import CommandInput
 from calculator.command import Command
 
@@ -72,3 +76,20 @@ def test_addition_validation_empty_args():
 
     assert isinstance(error, CLIError)
     assert "Addition command requires arguments" in str(error)
+
+
+def test_subtraction_validation():
+    """Test invalid arguments for subtraction"""
+    bad_args = ["x", "y"]
+    error = InvalidSubtractionArguments(bad_args)
+
+    assert isinstance(error, CLIError)
+    assert "x" in str(error)
+
+
+def test_subtraction_validation_empty_args():
+    """Test missing arguments for subtraction"""
+    error = MissingSubtractionArguments()
+
+    assert isinstance(error, CLIError)
+    assert "Subtraction command requires arguments" in str(error)
