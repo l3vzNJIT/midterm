@@ -23,4 +23,8 @@ def setup_env() -> None:
         str(log_config),
         defaults={"logs_path": str(logs_path / log_name)}
     )
+    # Get level from environment, default to INFO
+    log_level_str = os.getenv("LOG_LEVEL", "INFO").upper()
+    log_level = getattr(logging, log_level_str, logging.INFO)
+    logging.getLogger().setLevel(log_level)
     logging.debug("Initialized environment")
