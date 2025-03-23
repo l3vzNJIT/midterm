@@ -24,7 +24,10 @@ from calculator.commands.divide.exceptions import (
     MissingDivisionArguments,
     DivisionZeroArgument
 )
-from calculator.commands.history.exceptions import HistoryOverflow
+from calculator.commands.history.exceptions import (
+    HistoryOverflow,
+    InvalidHistoryPrintArguments
+)
 from calculator.command_input import CommandInput
 from calculator.command import Command
 
@@ -153,3 +156,11 @@ def test_history_overflow_error():
 
     assert isinstance(error, CLIError)
     assert "History full" in str(error)
+
+
+def test_history_print_invalid_args_error():
+    """Test history overflow exception"""
+    error = InvalidHistoryPrintArguments()
+
+    assert isinstance(error, CLIError)
+    assert "history print takes no arguments" in str(error)
