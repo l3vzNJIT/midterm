@@ -24,7 +24,7 @@ from calculator.commands.divide.exceptions import (
     MissingDivisionArguments,
     DivisionZeroArgument
 )
-
+from calculator.commands.history.exceptions import HistoryOverflow
 from calculator.command_input import CommandInput
 from calculator.command import Command
 
@@ -145,3 +145,11 @@ def test_division_by_zero():
 
     assert isinstance(error, CLIError)
     assert "Can't divide by 0" in str(error)
+
+
+def test_history_overflow_error():
+    """Test history overflow exception"""
+    error = HistoryOverflow()
+
+    assert isinstance(error, CLIError)
+    assert "History full" in str(error)
