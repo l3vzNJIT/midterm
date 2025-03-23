@@ -34,7 +34,7 @@ class Add(Command):
         """Verify arguments are valid decimals - LBYL"""
         bad_args = []
 
-        for arg_name, arg_value in self.cmd.args.items():
+        for arg_value in self.cmd.args.values():
             try:
                 Decimal(arg_value)
             except (InvalidOperation, ValueError):

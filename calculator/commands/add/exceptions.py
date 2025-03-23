@@ -1,6 +1,5 @@
 """Module for Add plugin command exceptions"""
 
-import logging
 from calculator.exceptions import CLIError
 
 

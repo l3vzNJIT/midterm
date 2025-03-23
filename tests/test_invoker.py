@@ -26,6 +26,10 @@ class DummyCommand(Command):
         """Return whether this dummy command is considered in scope."""
         return self.match
 
+    def validate(self):  # pylint: disable=arguments-differ
+        """Return whether this dummy command has valid arguments"""
+        return self.match
+
     def __call__(self, cmd):
         """Simulate plugin instantiation."""
         return self
