@@ -2,6 +2,7 @@
 
 import os
 import logging
+from functools import wraps
 import pandas as pd
 from calculator.command_input import CommandInput
 from calculator.command_output import CommandOutput
@@ -23,6 +24,7 @@ class History():
     @staticmethod
     def autosave(method):
         """Decorator to automatically save history after modifying it"""
+        @wraps(method)
         def wrapper(self, *args, **kwargs):
             result = method(self, *args, **kwargs)
             self.save_history()
