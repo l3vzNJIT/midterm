@@ -17,7 +17,7 @@ def test_valid_command_strings(cmd):
     assert Add.in_scope(CommandInput(cmd))
 
 
-@pytest.mark.parametrize("cmd_args", ["add a", "add 1a 2e", "add -e 156f"])
+@pytest.mark.parametrize("cmd_args", ["add a b", "add 1a 2e", "add -e 156f"])
 def test_invalid_argument_strings(cmd_args):
     """Verify bad arguments are caught"""
     with pytest.raises(InvalidAdditionArguments):
@@ -43,11 +43,7 @@ def test_addition_range(add_input):
     output = Add(add_input).execute()
     assert isinstance(output, CommandOutput)
 
-    if add_input.num_args == 0:
-        correct_sum = None
-    else:
-        correct_sum = 0
-
+    correct_sum = 0
     for i in range(1, add_input.num_args + 1):
         correct_sum += Decimal(add_input.args[f"argument_{i}"])
 

@@ -75,7 +75,7 @@ def test_addition_validation_empty_args():
     error = MissingAdditionArguments()
 
     assert isinstance(error, CLIError)
-    assert "Addition command requires arguments" in str(error)
+    assert "Addition command requires at least 2 arguments" in str(error)
 
 
 def test_subtraction_validation():
@@ -92,4 +92,4 @@ def test_subtraction_validation_empty_args():
     error = MissingSubtractionArguments()
 
     assert isinstance(error, CLIError)
-    assert "Subtraction command requires arguments" in str(error)
+    assert "Subtraction command requires at least 2 arguments" in str(error)

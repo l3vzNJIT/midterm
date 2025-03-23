@@ -13,5 +13,5 @@ class InvalidSubtractionArguments(CLIError):
 class MissingSubtractionArguments(CLIError):
     """Error to raise when invalid arguments are passed"""
     def __init__(self) -> None:
-        error_msg = "Subtraction command requires arguments"
+        error_msg = "Subtraction command requires at least 2 arguments"
         super().__init__(error_msg)

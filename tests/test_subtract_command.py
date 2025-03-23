@@ -17,7 +17,7 @@ def test_valid_command_strings(cmd):
     assert Subtract.in_scope(CommandInput(cmd))
 
 
-@pytest.mark.parametrize("cmd_args", ["sub a", "sub 1a 2e", "sub -e 156f"])
+@pytest.mark.parametrize("cmd_args", ["sub a b", "sub 1a 2e", "sub -e 156f"])
 def test_invalid_argument_strings(cmd_args):
     """Verify bad arguments are caught"""
     with pytest.raises(InvalidSubtractionArguments):
