@@ -26,7 +26,8 @@ def test_setup_env_configures_logging(
         "LOG_NAME": "app.log",
         "LOG_DIR_NAME": "logs",
         "LOG_CONFIG_NAME": "logging.conf",
-        "HISTORY_DIR_NAME": "history"
+        "HISTORY_DIR_NAME": "history",
+        "HISTORY_NAME": "calculator.history"
     }.get(key, default)
 
     setup_env()

@@ -2,6 +2,7 @@
 
 from decimal import Decimal
 from faker import Faker
+import pytest
 from calculator.command_input import CommandInput
 
 
@@ -13,6 +14,13 @@ def pytest_addoption(parser):
         default="100",
         help="Number of records to use in tests"
     )
+
+
+@pytest.fixture(autouse=True)
+def patch_env_for_tests(monkeypatch, tmp_path):
+    """Get a dummy history file to use for all tests"""
+    test_history_path = tmp_path / "test_history.csv"
+    monkeypatch.setenv("HISTORY_FILE", str(test_history_path))
 
 
 def gen_rnd_cmd():

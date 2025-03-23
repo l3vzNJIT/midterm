@@ -4,6 +4,7 @@ from unittest.mock import patch, MagicMock
 import pytest
 from calculator.cli import CLI
 from calculator.command_input import CommandInput
+from calculator.command_output import CommandOutput
 from calculator.exceptions import CLIExit, CLIError
 
 
@@ -56,13 +57,14 @@ def test_cli_runs_one_command_and_exits(monkeypatch):
     monkeypatch.setattr("builtins.input", lambda _: next(inputs))
 
     # Fake command output
-    cli.invoker.execute_command = MagicMock(return_value="5")
+    cli.invoker.execute_command = MagicMock(return_value=CommandOutput("5"))
 
     with patch("builtins.print") as mock_print:
         cli.start()
 
     assert cli.commands_run == 1
-    mock_print.assert_any_call("5")
+    printed_values = [str(call.args[0]) for call in mock_print.call_args_list]
+    assert "5" in printed_values
     assert any("Ran 1 command in" in str(call) for call in mock_print.call_args_list)
 
 
