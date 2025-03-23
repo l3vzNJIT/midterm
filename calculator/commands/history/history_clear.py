@@ -3,7 +3,6 @@
 import os
 import re
 import logging
-import pandas as pd
 from calculator.command import Command
 from calculator.command_input import CommandInput
 from calculator.command_output import CommandOutput
