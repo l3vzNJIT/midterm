@@ -17,6 +17,11 @@ class Command(ABC):
         raise NotImplementedError("in_scope must be implemented by subclass")
 
 
+    def validate(self) -> None:
+        """Validates arguments, raises exception if invalid"""
+        raise NotImplementedError("validate must be implemented by subclass")
+
+
     @abstractmethod
     def execute(self) -> CommandOutput:
         """Executes the functionality of this command"""

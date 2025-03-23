@@ -5,10 +5,11 @@ Uses decimal data type.
 
 import re
 import logging
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from calculator.command import Command
 from calculator.command_input import CommandInput
 from calculator.command_output import CommandOutput
+from calculator.commands.add.exceptions import InvalidAdditionArguments
 
 
 class Add(Command):
@@ -27,6 +28,21 @@ class Add(Command):
         """Return T/F if the command is in this plugin's scope"""
         logging.debug(f"Add plugin scope check for {cmd.command}")
         return bool(cls.COMMAND_PATTERN.match(cmd.command))
+
+
+    def validate(self) -> None:
+        """Verify arguments are valid decimals - LBYL"""
+        bad_args = []
+
+        for arg_value in self.cmd.args.values():
+            try:
+                Decimal(arg_value)
+            except (InvalidOperation, ValueError):
+                bad_args.append(arg_value)
+
+        if len(bad_args) > 0:
+            raise InvalidAdditionArguments(bad_args)
+
 
 
     def execute(self) -> CommandOutput:
