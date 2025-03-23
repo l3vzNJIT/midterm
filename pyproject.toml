@@ -22,4 +22,5 @@ where = ["."]
 disable = ["unnecessary-ellipsis",
             "unnecessary-pass",
             "logging-fstring-interpolation",
-            "duplicate-code"]
+            "duplicate-code",
+            "attribute-defined-outside-init"]

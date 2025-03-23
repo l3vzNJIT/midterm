@@ -15,3 +15,5 @@ build/
 .env
 # logs
 logs/
+# history
+history/
