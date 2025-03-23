@@ -5,13 +5,26 @@ import pytest
 from calculator.command_input import CommandInput
 from calculator.command_output import CommandOutput
 from calculator.commands.add.add import Add
+from calculator.commands.add.exceptions import InvalidAdditionArguments
 
 
 @pytest.mark.parametrize("cmd", ["add", "Add", "+", "plus", "addItion"])
-
 def test_valid_command_strings(cmd):
     """Verify expected strings are accepted by regex"""
     assert Add.in_scope(CommandInput(cmd))
+
+
+@pytest.mark.parametrize("cmd_args", ["add a", "add 1a 2e", "add -e 156f"])
+def test_invalid_argument_strings(cmd_args):
+    """Verify bad arguments are caught"""
+    with pytest.raises(InvalidAdditionArguments):
+        Add(CommandInput(cmd_args)).validate()
+
+
+@pytest.mark.parametrize("cmd_args", ["add 1 2", "add -10 5 4", "add -0 0 -0 0"])
+def test_valid_argument_strings(cmd_args):
+    """Verify good arguments are accepted"""
+    Add(CommandInput(cmd_args)).validate()
 
 
 def test_addition_range(add_input):

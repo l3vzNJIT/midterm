@@ -11,6 +11,8 @@ class DummyCommand(Command):
     def in_scope(cls, cmd):
         return super().in_scope(cmd)
 
+    def validate(self):  # pylint: disable=useless-parent-delegation
+        return super().validate()
 
     def execute(self):  # pylint: disable=useless-parent-delegation
         return super().execute()
@@ -22,6 +24,9 @@ def test_dummy_plugin_behavior():
 
     with pytest.raises(NotImplementedError):
         plugin.in_scope(CommandInput("test"))
+
+    with pytest.raises(NotImplementedError):
+        plugin.validate()  # pylint: disable=useless-parent-delegation
 
     with pytest.raises(NotImplementedError):
         plugin.execute()  # pylint: disable=useless-parent-delegation
