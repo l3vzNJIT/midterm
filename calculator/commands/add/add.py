@@ -32,7 +32,7 @@ class Add(Command):
 
     def validate(self) -> None:
         """Verify arguments are valid decimals - LBYL"""
-        if len(self.cmd.args.keys()) == 0:
+        if len(self.cmd.args.keys()) < 2:
             raise MissingAdditionArguments
 
         bad_args = []

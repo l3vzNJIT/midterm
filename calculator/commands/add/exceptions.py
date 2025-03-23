@@ -13,5 +13,5 @@ class InvalidAdditionArguments(CLIError):
 class MissingAdditionArguments(CLIError):
     """Error to raise when invalid arguments are passed"""
     def __init__(self) -> None:
-        error_msg = "Addition command requires arguments"
+        error_msg = "Addition command requires at least 2 arguments"
         super().__init__(error_msg)
