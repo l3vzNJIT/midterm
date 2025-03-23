@@ -49,4 +49,11 @@ class Invoker():
 
     def execute_command(self, cmd: CommandInput) -> CommandOutput:
         """Execute plugin command"""
-        return self._choose_command(cmd)(cmd).execute()
+        logging.debug("Choosing plugin")
+        command = self._choose_command(cmd)(cmd)
+        #LBYL - validate command arguments
+        logging.debug("Validating arguments")
+        command.validate()
+        # execute command
+        logging.debug("Executing command")
+        return command.execute()
