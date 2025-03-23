@@ -53,7 +53,10 @@ class History():
         if len(self.history) < HISTORY_SIZE:
             new_row_df = pd.DataFrame([row])
             new_row_df.index = [self.history.index.max() + 1 if not self.history.empty else 0]
-            self.history = pd.concat([self.history, new_row_df])
+            if self.history.empty:
+                self.history = new_row_df
+            else:
+                self.history = pd.concat([self.history, new_row_df])
         else:
             logging.debug(f"Max history size ({HISTORY_SIZE}) exceeded, rolling over")
             raise HistoryOverflow
@@ -64,7 +67,11 @@ class History():
         logging.debug(f"Overwriting row {index + 1} in history with {row}")
 
         if index < HISTORY_SIZE:
-            self.history.iloc[index] = pd.Series(row)
+            # Create a single-row DataFrame with aligned columns and types
+            row_df = pd.DataFrame([row], columns=self.history.columns)
+
+            # Assign with automatic type handling
+            self.history.iloc[index] = row_df.iloc[0]
         else:
             raise HistoryOverflow
 
@@ -72,6 +79,8 @@ class History():
     @autosave
     def add(self, cmd_in: CommandInput, cmd_out: CommandOutput) -> None:
         """Add a new entry into history - EAFP"""
+        # history may have been altered
+        self.load_history()
         record = self.form_history_record(cmd_in, cmd_out)
         try:
             self.add_row(record)
@@ -111,6 +120,10 @@ class History():
                 parse_dates=["start_time", "end_time"],
                 index_col=0
             )
+
+            # Explicitly cast 'output' column to string to match expected dtype
+            self.history["output"] = self.history["output"].astype(str)
+
             self.cur_index = len(self.history) % HISTORY_SIZE
         except FileNotFoundError:
             logging.info(f"No history file found at {self.history_file}, starting fresh")
