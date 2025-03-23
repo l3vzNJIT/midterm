@@ -51,7 +51,9 @@ class History():
         logging.debug(f"Adding row to history: {row}")
 
         if len(self.history) < HISTORY_SIZE:
-            self.history = pd.concat([self.history, pd.DataFrame([row])], ignore_index=True)
+            new_row_df = pd.DataFrame([row])
+            new_row_df.index = [self.history.index.max() + 1 if not self.history.empty else 0]
+            self.history = pd.concat([self.history, new_row_df])
         else:
             logging.debug(f"Max history size ({HISTORY_SIZE}) exceeded, rolling over")
             raise HistoryOverflow
@@ -96,14 +98,18 @@ class History():
     def save_history(self):
         """Persist history data frame"""
         logging.debug("Updating history file")
-        self.history.to_csv(self.history_file, index=False)
+        self.history.to_csv(self.history_file, index=True)
 
 
     def load_history(self):
         """Load history from file"""
         try:
             logging.debug(f"Loading history from {self.history_file}")
-            self.history = pd.read_csv(self.history_file, parse_dates=["start_time", "end_time"])
+            self.history = pd.read_csv(
+                self.history_file,
+                parse_dates=["start_time", "end_time"],
+                index_col=0
+            )
             self.cur_index = len(self.history) % HISTORY_SIZE
         except FileNotFoundError:
             logging.info(f"No history file found at {self.history_file}, starting fresh")
