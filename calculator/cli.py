@@ -8,6 +8,7 @@ from calculator.exceptions import CLIError, CLIExit
 from calculator.command_input import CommandInput
 from calculator.invoker import Invoker
 from calculator.timedeltaprint import pprintrd
+from calculator.commands.history.history import History
 
 
 class CLI():
@@ -18,6 +19,7 @@ class CLI():
         # exit interpretor command regex
         self.exit_pattern = re.compile(r"\s*(exit|e|quit|q)", re.IGNORECASE)
         self.invoker = Invoker()
+        self.history = History()
 
 
     def _print_exit_msg(self) -> None:
@@ -46,6 +48,7 @@ class CLI():
                 self._check_for_exit(command)
                 result = self.invoker.execute_command(command)
                 self.commands_run += 1
+                self.history.add(command, result)
                 print(result)
             except CLIError:
                 # Choosing not to exit the calculator if the user does a typo
