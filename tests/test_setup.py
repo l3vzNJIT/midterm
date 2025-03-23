@@ -22,11 +22,11 @@ def test_setup_env_configures_logging(
     """
 
     # Mock the expected environment variables
-    mock_getenv.side_effect = lambda key: {
+    mock_getenv.side_effect = lambda key, default=None: {
         "LOG_NAME": "app.log",
         "LOG_DIR_NAME": "logs",
         "LOG_CONFIG_NAME": "logging.conf",
-    }[key]
+    }.get(key, default)
 
     setup_env()
 
