@@ -20,7 +20,7 @@ def fixture_temp_history_file(tmp_path):
 @pytest.fixture(name="history_instance")
 def fixture_sample_history(temp_history_path):
     """Returns a new History instance using the temp history file."""
-    _ = temp_history_path  # suppress unused-argument warning
+    _ = temp_history_path
     return History()
 
 
@@ -80,14 +80,14 @@ def test_add_method_rolls_over(history_instance, command_pair):
     cmd_in, cmd_out = command_pair
     for _ in range(HISTORY_SIZE):
         history_instance.add(cmd_in, cmd_out)
-    history_instance.add(cmd_in, cmd_out)  # this should roll over
+    history_instance.add(cmd_in, cmd_out)
     assert len(history_instance.history) == HISTORY_SIZE
     assert history_instance.cur_index == 1
 
 
 def test_save_and_load_persistence(temp_history_path, command_pair):
     """Test save_history and load_history store and reload data."""
-    _ = temp_history_path  # suppress unused-argument warning
+    _ = temp_history_path
     cmd_in, cmd_out = command_pair
 
     h1 = History()
@@ -103,30 +103,25 @@ def test_save_and_load_persistence(temp_history_path, command_pair):
 def test_add_overwrites_and_increments_index(history_instance, command_pair):
     """Test that add() overwrites current index and increments it (first overwrite block)."""
     cmd_in, cmd_out = command_pair
-
     for _ in range(HISTORY_SIZE):
         history_instance.add(cmd_in, cmd_out)
-
     history_instance.cur_index = 2
-
+    history_instance.load_history = lambda: None  # prevent reset
     history_instance.add(cmd_in, cmd_out)
-
     assert history_instance.cur_index == 3
 
 
 def test_add_executes_first_overwrite_block_only(history_instance, command_pair):
-    """Ensure add() hits only the first overwrite block (lines 78–80)."""
+    """Ensure add() hits only the first overwrite block."""
     cmd_in, cmd_out = command_pair
     row = History.form_history_record(cmd_in, cmd_out)
 
-    # Fill history to max size
     for _ in range(HISTORY_SIZE):
         history_instance.add_row(row)
 
-    # Set cur_index so that the first overwrite block will be used
     history_instance.cur_index = 2
+    history_instance.load_history = lambda: None  # prevent reset
 
-    # Patch overwrite_row to track calls and simulate first block success
     original_overwrite = history_instance.overwrite_row
     mock = Mock(wraps=original_overwrite)
 
@@ -138,24 +133,20 @@ def test_add_executes_first_overwrite_block_only(history_instance, command_pair)
     mock.side_effect = side_effect
     history_instance.overwrite_row = mock
 
-    # Run
     history_instance.add(cmd_in, cmd_out)
 
-    # Confirm only first overwrite was used
     mock.assert_called_once_with(2, History.form_history_record(cmd_in, cmd_out))
     assert history_instance.cur_index == 3
 
 
 def test_add_triggers_fallback_overwrite(history_instance, command_pair):
-    """Test that add() triggers fallback overwrite block (lines 80–82)."""
+    """Test that add() triggers fallback overwrite block."""
     cmd_in, cmd_out = command_pair
     record = History.form_history_record(cmd_in, cmd_out)
 
-    # Fill history so add_row fails
     for _ in range(HISTORY_SIZE):
         history_instance.add_row(record)
 
-    # Patch overwrite_row to raise HistoryOverflow the first time
     original = history_instance.overwrite_row
     calls = []
 
@@ -167,10 +158,10 @@ def test_add_triggers_fallback_overwrite(history_instance, command_pair):
 
     history_instance.cur_index = 4
     history_instance.overwrite_row = flaky_overwrite
+    history_instance.load_history = lambda: None  # prevent reset
 
     history_instance.add(cmd_in, cmd_out)
 
-    # First call failed, second should succeed at index 0
     assert calls == [4, 0]
-    assert history_instance.cur_index == 0  # explicitly set in fallback
+    assert history_instance.cur_index == 0
     assert history_instance.history.iloc[0]["command"] == "add"
