@@ -7,6 +7,7 @@ add_plugin = "calculator.commands.add.add:Add"
 subtract_plugin = "calculator.commands.subtract.subtract:Subtract"
 multiply_plugin = "calculator.commands.multiply.multiply:Multiply"
 division_plugin = "calculator.commands.divide.divide:Divide"
+historyprint_plugin = "calculator.commands.history.history_print:HistoryPrint"
 
 [project.scripts]
 run_calculator = "calculator.main:main"

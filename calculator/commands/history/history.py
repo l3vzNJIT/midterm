@@ -64,7 +64,7 @@ class History():
         logging.debug(f"Overwriting row {index + 1} in history with {row}")
 
         if index < HISTORY_SIZE:
-            self.history.iloc[index] = row
+            self.history.iloc[index] = pd.Series(row)
         else:
             raise HistoryOverflow
 
@@ -84,6 +84,7 @@ class History():
                 self.overwrite_row(self.cur_index, record)
 
 
+    @autosave
     def create_empty_history(self) -> None:
         """Define history data frame"""
         self.history = pd.DataFrame({
