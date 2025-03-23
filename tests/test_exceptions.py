@@ -15,6 +15,16 @@ from calculator.commands.subtract.exceptions import (
     InvalidSubtractionArguments,
     MissingSubtractionArguments
 )
+from calculator.commands.multiply.exceptions import (
+    InvalidMultiplicationArguments,
+    MissingMultiplicationArguments
+)
+from calculator.commands.divide.exceptions import (
+    InvalidDivisionArguments,
+    MissingDivisionArguments,
+    DivisionZeroArgument
+)
+
 from calculator.command_input import CommandInput
 from calculator.command import Command
 
@@ -93,3 +103,45 @@ def test_subtraction_validation_empty_args():
 
     assert isinstance(error, CLIError)
     assert "Subtraction command requires at least 2 arguments" in str(error)
+
+
+def test_multiplication_validation():
+    """Test invalid arguments for multilplication"""
+    bad_args = ["x", "y"]
+    error = InvalidMultiplicationArguments(bad_args)
+
+    assert isinstance(error, CLIError)
+    assert "x" in str(error)
+
+
+def test_multiplication_validation_empty_args():
+    """Test missing arguments for subtraction"""
+    error = MissingMultiplicationArguments()
+
+    assert isinstance(error, CLIError)
+    assert "Multiplication command requires at least 2 arguments" in str(error)
+
+
+def test_division_validation():
+    """Test invalid arguments for division"""
+    bad_args = ["x", "y"]
+    error = InvalidDivisionArguments(bad_args)
+
+    assert isinstance(error, CLIError)
+    assert "x" in str(error)
+
+
+def test_division_validation_empty_args():
+    """Test missing arguments for subtraction"""
+    error = MissingDivisionArguments()
+
+    assert isinstance(error, CLIError)
+    assert "Division command requires at least 2 arguments" in str(error)
+
+
+def test_division_by_zero():
+    """Test missing arguments for subtraction"""
+    error = DivisionZeroArgument()
+
+    assert isinstance(error, CLIError)
+    assert "Can't divide by 0" in str(error)
