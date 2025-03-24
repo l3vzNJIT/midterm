@@ -11,7 +11,7 @@ Modern Python development practice: SOLID, DRY, 12 factor app, design patterns
 ## Linux
 ```bash
 # Clone the repository
-git clone https://github.com/l3vzNJIT/homework5.git
+git clone https://github.com/l3vzNJIT/midterm.git
 # Go to project folder
 cd homework5
 # Install required packages - necessary for plugin code to work
