@@ -1,3 +1,6 @@
 # Lev's Midterm Project
-### Under Construction
-Comming Soon
+Lev Zelenin - Web Systems Programming - Keith Williams - Spring 2025
+
+
+## Objective
+Implement a simple command line calculator using modern software development methodology.
