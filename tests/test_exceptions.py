@@ -27,7 +27,9 @@ from calculator.commands.divide.exceptions import (
 from calculator.commands.history.exceptions import (
     HistoryOverflow,
     InvalidHistoryPrintArguments,
-    InvalidHistoryClearArguments
+    InvalidHistoryClearArguments,
+    InvalidHistoryDeleteArguments,
+    InvalidHistoryDeleteIndex
 )
 from calculator.command_input import CommandInput
 from calculator.command import Command
@@ -173,3 +175,19 @@ def test_history_clear_invalid_args_error():
 
     assert isinstance(error, CLIError)
     assert "history clear takes no arguments" in str(error)
+
+
+def test_history_delete_invalid_args_error():
+    """Test history overflow exception"""
+    error = InvalidHistoryDeleteArguments()
+
+    assert isinstance(error, CLIError)
+    assert "history delete takes 1 argument (index)" in str(error)
+
+
+def test_history_clear_invalid_index_error():
+    """Test history overflow exception"""
+    error = InvalidHistoryDeleteIndex()
+
+    assert isinstance(error, CLIError)
+    assert "Deletion index must be between 0 and len(history) - 1" in str(error)
