@@ -13,7 +13,7 @@ Modern Python development practice: SOLID, DRY, 12 factor app, design patterns
 # Clone the repository
 git clone https://github.com/l3vzNJIT/midterm.git
 # Go to project folder
-cd homework5
+cd midterm
 # Install required packages - necessary for plugin code to work
 pip install -r requirements.txt
 # Run (note this command will be available in env through pip install)
