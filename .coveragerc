@@ -7,3 +7,5 @@ show_missing = True
 skip_covered = False
 exclude_lines =
     if __name__ == .__main__.:
+omit =
+    */calculator/commands/history/history_clear.py

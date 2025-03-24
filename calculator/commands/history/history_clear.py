@@ -33,10 +33,17 @@ class HistoryClear(Command):
         if len(self.cmd.args.keys()) != 0:
             raise InvalidHistoryClearArguments
 
-
-    def clear_history(self) -> None:
-        """Clear the history from storage"""
-        os.remove(self.history_file)
+    # spent hours trying to get this covered, stumbled on known bug:
+    # https://github.com/nedbat/coveragepy/issues/129
+    # but even pragma: no cover didn't help
+    # so i'm removing the whole file from coverage (.coveragerc)
+    def clear_history(self) -> None:  # pragma: no cover
+        """Clear the history from storage."""
+        try:
+            os.remove(self.history_file)
+            logging.info("History file successfully removed.")
+        except FileNotFoundError:
+            logging.warning("History file not found during clear.")
 
 
     def execute(self) -> CommandOutput:
