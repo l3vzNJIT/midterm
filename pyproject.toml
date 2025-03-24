@@ -9,6 +9,7 @@ multiply_plugin = "calculator.commands.multiply.multiply:Multiply"
 division_plugin = "calculator.commands.divide.divide:Divide"
 historyprint_plugin = "calculator.commands.history.history_print:HistoryPrint"
 historyclear_plugin = "calculator.commands.history.history_clear:HistoryClear"
+historydelete_plugin = "calculator.commands.history.history_delete:HistoryDelete"
 
 [project.scripts]
 run_calculator = "calculator.main:main"
