@@ -7,7 +7,10 @@ import pandas as pd
 from calculator.command import Command
 from calculator.command_input import CommandInput
 from calculator.command_output import CommandOutput
-from calculator.commands.history.exceptions import InvalidHistoryDeleteArguments
+from calculator.commands.history.exceptions import (
+    InvalidHistoryDeleteArguments,
+    InvalidHistoryDeleteIndex
+)
 
 
 class HistoryDelete(Command):
@@ -37,8 +40,8 @@ class HistoryDelete(Command):
 
         try:
             idx = int(self.cmd.args["argument_1"])
-        except (InvalidOperation, ValueError):
-            raise InvalidHistoryDeleteArguments
+        except ValueError as exc:
+            raise InvalidHistoryDeleteArguments from exc
 
         if idx < 0 or idx >= len(self.history):
             raise InvalidHistoryDeleteIndex
@@ -64,7 +67,7 @@ class HistoryDelete(Command):
             # Explicitly cast 'output' column to string to match expected dtype
             self.history["output"] = self.history["output"].astype(str)
         except FileNotFoundError:
-            logging.info(f"No history file to delete from!")
+            logging.info("No history file to delete from!")
             raise
 
 
