@@ -22,82 +22,105 @@ run_calculator
 python calculator/main.py
 ```
 
-# Midterm Project: Advanced Python Calculator
-**Author:** Lev Zelenin  
-**Course:** Web Systems Programming – Spring 2025  
-**Instructor:** Keith Williams  
-**Repository:** https://github.com/l3vzNJIT/midterm
+
+# Detailed paper with cited examples in the code
 
 ---
 
 ## 1. Overview
 
-This project implements a command-line calculator in Python, with a focus on professional software development methodologies. It features a plugin-based architecture utilizing the Command pattern, persistent history management with CSV, structured logging, and testable modular design. Configuration is environment-based, following 12-factor app principles, and the system supports CI/CD integration with GitHub Actions.
+This project implements a command-line calculator in Python, with a focus on professional software development methodologies. It features a plugin-based architecture utilizing the Command pattern, persistent history management with CSV using pandas, structured logging via the built-in `logging` module, and a modular design conducive to testing and maintenance. Configuration is managed using environment variables, following 12-factor app principles. The project also integrates CI/CD through GitHub Actions.
 
 ---
 
 ## 2. REPL Command Loop
 
-The REPL loop is managed through [`main.py`](https://github.com/l3vzNJIT/midterm/blob/master/calculator/main.py), which initializes logging, loads environment configurations, and loops for user input. Input is passed to the `Invoker` class to determine which plugin should handle the command.
+The REPL loop is initiated by [`main.py`](https://github.com/l3vzNJIT/midterm/blob/master/calculator/main.py). This script handles environment setup, initializes logging based on the `logging.conf` file, and starts the main input loop. User inputs are passed to the `Invoker` class to determine the appropriate plugin for execution.
 
 ---
 
 ## 3. Plugin System and Command Pattern
 
-The `Command` interface is defined in [`command.py`](https://github.com/l3vzNJIT/midterm/blob/master/calculator/commands/command.py). Each plugin class implements `scope(input: str)` to determine applicability and `execute(input: str)` to perform actions. This structure promotes modular design and ease of extensibility.
+The `Command` interface defined in [`command.py`](https://github.com/l3vzNJIT/midterm/blob/master/calculator/command.py) serves as the contract for all commands. Each plugin must implement the `scope()` method to determine if it can handle the input, and `execute()` to perform the operation.
 
-Plugins are stored in the [`plugins/`](https://github.com/l3vzNJIT/midterm/tree/master/calculator/plugins) directory. Examples include arithmetic operations (`add`, `subtract`, etc.) and history operations (`HistoryAdd`, `HistoryPrint`, etc.).
+Supported plugins include:
+- [`add.py`](https://github.com/l3vzNJIT/midterm/blob/master/calculator/commands/add/add.py): Adds two or more numbers.
+- [`subtract.py`](https://github.com/l3vzNJIT/midterm/blob/master/calculator/commands/subtract/subtract.py): Subtracts one number from another.
+- [`multiply.py`](https://github.com/l3vzNJIT/midterm/blob/master/calculator/commands/multiply/multiply.py): Multiplies numbers.
+- [`divide.py`](https://github.com/l3vzNJIT/midterm/blob/master/calculator/commands/divide/divide.py): Divides numbers with error handling for division by zero.
+
+History-related plugins include:
+- [`history_print.py`](https://github.com/l3vzNJIT/midterm/blob/master/calculator/commands/history/history_print.py): Outputs saved command history from the CSV.
+- [`history_clear.py`](https://github.com/l3vzNJIT/midterm/blob/master/calculator/commands/history/history_clear.py): Clears the entire history file.
+- [`history_delete.py`](https://github.com/l3vzNJIT/midterm/blob/master/calculator/commands/history/history_delete.py): Deletes a specific record by index.
+- [`history.py`](https://github.com/l3vzNJIT/midterm/blob/master/calculator/commands/history/history.py): Shared logic for reading and writing to the history CSV file.
 
 ---
 
 ## 4. Class Responsibilities
 
 ### `Invoker`
-Located in [`invoker.py`](https://github.com/l3vzNJIT/midterm/blob/master/calculator/invoker.py), this class is responsible for scanning available plugins, routing input to the correct command based on `scope()`, and invoking execution. It also stores the runtime history of commands executed during the session.
+Defined in [`invoker.py`](https://github.com/l3vzNJIT/midterm/blob/master/calculator/invoker.py), this class scans the command directory at runtime and loads available command classes. It calls `scope()` on each to determine the right command for a given input. This modular approach enables extensibility without modifying the REPL core.
 
-### `HistoryManager`
-Implemented within [`history.py`](https://github.com/l3vzNJIT/midterm/blob/master/calculator/history.py), it handles reading and writing the persistent history to a CSV file using `pandas`. It ensures no more than five history records are stored and provides methods for addition, deletion, and reloading.
+### Command Input/Output
+- [`command_input.py`](https://github.com/l3vzNJIT/midterm/blob/master/calculator/command_input.py) provides utilities to normalize and validate input before routing to commands.
+- [`command_output.py`](https://github.com/l3vzNJIT/midterm/blob/master/calculator/command_output.py) standardizes output formatting for consistency.
 
-### `Logger`
-Logging is set up through [`logger.py`](https://github.com/l3vzNJIT/midterm/blob/master/calculator/logger.py), configuring file and console output. Logging replaces print debugging and is used for all diagnostics.
+### History Handling
+- [`history.py`](https://github.com/l3vzNJIT/midterm/blob/master/calculator/commands/history/history.py) acts as the central history module, providing methods for loading from and saving to the CSV history file. It uses `pandas` for fast file-based data operations.
+- Other history plugins (`clear`, `delete`, `print`) call this module to read or manipulate the stored command history.
+
+### Logging
+Logging is initialized in `main.py` and configured using [`logging.conf`](https://github.com/l3vzNJIT/midterm/blob/master/calculator/logging.conf). Logs are written to a file and provide insight into each major application event. This includes successful command execution, errors, and exceptions.
 
 ---
 
 ## 5. Environment Configuration
 
-This project follows the 12-factor methodology by storing file paths and settings in environment variables. These are loaded via `dotenv` in the REPL entry file. The history CSV location, logging level, and history record limit are all configured externally.
+Runtime environment setup is handled by:
+- [`setup_env.py`](https://github.com/l3vzNJIT/midterm/blob/master/calculator/setup_env.py): Loads environment variables and prepares paths for logging and history persistence.
+- `.env`: A file (excluded from version control) specifying paths, limits, and logging levels.
+- The system uses `python-dotenv` to read these variables at startup.
+
+This enables flexible configuration across environments and supports practices like using relative/absolute paths and injecting test-specific variables.
 
 ---
 
 ## 6. Design Patterns in Use
 
-- **Command Pattern:** Each plugin command encapsulates user input processing.
-- **Factory-Like Behavior:** `Invoker` selects and dispatches commands at runtime.
-- **Strategy:** Plugins define their own logic for input matching and execution.
-- **Logging Abstraction:** Centralized logger handles application-wide diagnostics.
+- **Command Pattern**: Each plugin follows a consistent interface, simplifying dispatch.
+- **Factory Pattern**: The `Invoker` behaves like a factory for selecting and executing commands.
+- **Strategy Pattern**: Different plugins implement their own logic while conforming to a shared interface.
+- **Separation of Concerns**: Configuration, logging, input/output, and plugin logic are modular.
 
 ---
 
 ## 7. Exception Handling
 
-- **EAFP (Easier to Ask Forgiveness than Permission):** Used for loading files and runtime operations that might fail.
-- **LBYL (Look Before You Leap):** Used for validating directory existence and configurations before use.
+The code adheres to both:
+- **EAFP (Easier to Ask Forgiveness than Permission)**: Most plugin operations attempt actions (like file reads) and catch exceptions.
+- **LBYL (Look Before You Leap)**: Used in `setup_env.py` and `history.py` to ensure paths exist and files are readable.
 
 Examples:
-- [`main.py` usage](https://github.com/l3vzNJIT/midterm/blob/master/calculator/main.py#L18)
-- [`history.py` LBYL logic](https://github.com/l3vzNJIT/midterm/blob/master/calculator/history.py#L36)
+- [`main.py`](https://github.com/l3vzNJIT/midterm/blob/master/calculator/main.py#L18): Handles REPL and top-level exceptions.
+- [`history.py`](https://github.com/l3vzNJIT/midterm/blob/master/calculator/commands/history/history.py): Manages file access safely.
 
 ---
 
 ## 8. Testing and CI/CD
 
-Tests are located in the [`tests/`](https://github.com/l3vzNJIT/midterm/tree/master/tests) directory and include unit coverage for each plugin and utility. GitHub Actions runs tests via [`test.yml`](https://github.com/l3vzNJIT/midterm/blob/master/.github/workflows/test.yml) to ensure build integrity.
+The project includes full automated testing:
+- [`tests/`](https://github.com/l3vzNJIT/midterm/tree/master/tests): Unit tests for all plugin commands and shared logic
+- [`python-app.yml`](https://github.com/l3vzNJIT/midterm/blob/master/.github/workflows/python-app.yml): GitHub Actions workflow for CI
+- [`.coveragerc`](https://github.com/l3vzNJIT/midterm/blob/master/.coveragerc): Configures coverage reporting
+- [`pyproject.toml`](https://github.com/l3vzNJIT/midterm/blob/master/pyproject.toml): Specifies project metadata and test dependencies
+- [`requirements.txt`](https://github.com/l3vzNJIT/midterm/blob/master/requirements.txt): Lists all Python dependencies including `pandas`, `pytest`, and `python-dotenv`
 
 ---
 
 ## 9. Commit History and Practices
 
-Commits in the [master branch](https://github.com/l3vzNJIT/midterm/commits/master) reflect incremental development, feature-based commits, and associated test additions. The structure follows good commit hygiene for clarity and traceability.
+The [commit history](https://github.com/l3vzNJIT/midterm/commits/master) reflects proper use of Git. Each commit is feature-focused and contains logical changes: adding new commands, improving test coverage, fixing edge case bugs, and organizing the file structure. This auditability is important for collaborative work and continuous integration.
 
 ---
 
@@ -108,7 +131,7 @@ Commits in the [master branch](https://github.com/l3vzNJIT/midterm/commits/maste
 | Plugin-based REPL                         | ✅        |
 | CSV + Pandas History Management           | ✅        |
 | Environment Variable Usage                | ✅        |
-| Logging via `logger.py`                   | ✅        |
+| Logging via built-in logging module       | ✅        |
 | EAFP + LBYL Handling                      | ✅        |
 | CI via GitHub Actions                     | ✅        |
 | 90%+ Test Coverage                        | 🔄        |
