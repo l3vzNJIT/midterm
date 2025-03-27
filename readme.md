@@ -30,161 +30,137 @@ python calculator/main.py
 **Author:** Lev Zelenin  
 **Course:** Web Systems Programming – Spring 2025  
 **Instructor:** Keith Williams  
-**Repo:** [l3vzNJIT/midterm](https://github.com/l3vzNJIT/midterm)
+**Repository:** https://github.com/l3vzNJIT/midterm
 
 ---
 
 ## 1. Overview
 
-This project is a command-line calculator application built using modern professional software practices, including:
-
-- A plugin-based REPL architecture using the Command Pattern
-- Persistent CSV-based history using Pandas
-- Dynamic configuration via environment variables
-- Logging system for diagnostics and traceability
-- Use of exceptions for error handling (EAFP and LBYL)
-- Automated testing and continuous integration with GitHub Actions
+This project is a command-line calculator written in Python that demonstrates modern software engineering principles and professional coding practices. It features a modular plugin architecture based on the Command design pattern, uses environment variables for configuration, and manages a persistent command history via CSV files using the Pandas library. Logging is used throughout for diagnostics, and error handling adheres to the EAFP and LBYL paradigms. The project is structured with testability in mind and supports continuous integration via GitHub Actions.
 
 ---
 
-## 2. Core Functionalities
+## 2. REPL Command Loop
 
-### REPL Command Loop
+At the heart of the application is a Read-Eval-Print Loop (REPL), where the user inputs commands that the system interprets and executes. This loop is implemented in `main.py`, which initializes the logging, loads environment configurations, and starts the REPL interface. When a user enters input, it is routed to the `Invoker`, which determines the correct command plugin to handle it. This design allows new commands to be added easily by simply introducing new plugin classes.
 
-- User interacts through a Read-Eval-Print Loop.
-- Input is interpreted and routed through dynamically loaded plugin commands.
-- The `main.py` file initializes the REPL loop and starts the application.
-
-📎 [CLI entry point](https://github.com/l3vzNJIT/midterm/blob/master/calculator/main.py)
-
-### Plugin System (Command Pattern)
-
-- Each calculator command (e.g., Add, Subtract, HistoryPrint) is implemented as a plugin.
-- Plugins inherit from a shared `Command` interface and are dynamically routed via the `Invoker` class.
-
-📎 [Command Interface](https://github.com/l3vzNJIT/midterm/blob/master/calculator/commands/command.py)  
-📎 [Plugins](https://github.com/l3vzNJIT/midterm/tree/master/calculator/plugins)
+📎 [CLI entry point - main.py](https://github.com/l3vzNJIT/midterm/blob/main/calculator/main.py)
 
 ---
 
-## 3. Code Structure and Class Responsibilities
+## 3. Plugin System (Command Pattern)
 
-### `Command` (Abstract Base Class)
-Defines the contract for all command plugins with:
-- `scope(self, user_input)`: Checks if the command should respond to the given input.
-- `execute(self, user_input)`: Executes the command logic.
+The calculator supports extensible commands via a plugin system using the Command design pattern. Each plugin implements a shared `Command` interface that defines two essential methods: `scope` and `execute`. The `scope` method is used to determine if a given user input should be handled by this command, and `execute` performs the logic. This pattern ensures a clear separation of concerns and makes it easy to introduce new features.
 
-### `Invoker`
-Acts as the controller of the application. Responsibilities include:
-- Scanning and loading command plugins dynamically.
-- Determining which plugin should handle a given input.
-- Delegating execution to the appropriate command.
-- Maintaining an internal history of executed commands.
+📎 [Command Interface](https://github.com/l3vzNJIT/midterm/blob/main/calculator/commands/command.py)  
+📎 [Plugins Folder](https://github.com/l3vzNJIT/midterm/tree/main/calculator/plugins)
 
-📎 [Invoker](https://github.com/l3vzNJIT/midterm/blob/master/calculator/invoker.py)
+---
 
-### `HistoryManager`
-Responsible for reading and writing calculation history to a CSV file.
-- Loads history using pandas on startup.
-- Saves new entries upon command execution.
-- Enforces maximum history size (e.g., 5 items).
-- Uses pandas DataFrame for in-memory manipulation.
+## 4. Code Structure and Class Responsibilities
 
-📎 [HistoryManager](https://github.com/l3vzNJIT/midterm/blob/master/calculator/history/history_manager.py)
+### `Command` Class
+
+This is an abstract base class that defines the contract for all command plugins. It ensures that each plugin implements a `scope` method to determine applicability and an `execute` method to carry out its task. This abstraction allows for consistent plugin behavior and helps maintain a clean and scalable architecture.
+
+### `Invoker` Class
+
+The `Invoker` class is responsible for orchestrating the command execution process. It dynamically loads all available plugins, evaluates which one should handle the input using their `scope` method, and invokes the corresponding `execute` function. It also manages an internal history of command execution for further functionality like logging and persistence.
+
+📎 [Invoker Implementation](https://github.com/l3vzNJIT/midterm/blob/main/calculator/invoker.py)
+
+### `HistoryManager` Class
+
+The `HistoryManager` handles all interactions with the CSV file where the calculation history is stored. It uses the Pandas library to read and write structured data, and enforces the maximum allowed number of stored calculations. It provides methods to load history on startup, save it on shutdown, and manipulate it during runtime.
+
+📎 [HistoryManager](https://github.com/l3vzNJIT/midterm/blob/main/calculator/history/history_manager.py)
 
 ### `settings.py`
-Manages configuration using environment variables via `dotenv`.  
-It defines:
-- Paths to history file
-- Logging level
-- Other operational parameters
 
-📎 [Settings](https://github.com/l3vzNJIT/midterm/blob/master/calculator/config/settings.py)
+This module handles configuration management by loading environment variables from a `.env` file using the `dotenv` package. These configurations control critical runtime parameters such as file paths and logging levels, allowing the application to be portable and environment-agnostic.
+
+📎 [Settings](https://github.com/l3vzNJIT/midterm/blob/main/calculator/config/settings.py)
 
 ### `logger.py`
-Central logging configuration. Provides:
-- Formatter and handlers
-- Console and file output
-- Configurable verbosity via `.env`
 
-📎 [Logger](https://github.com/l3vzNJIT/midterm/blob/master/calculator/utils/logger.py)
+A centralized logging module sets up a consistent logging configuration that can be reused across the entire application. It supports different logging levels (DEBUG, INFO, ERROR) and logs both to the console and to a file, aiding debugging and professional-grade traceability.
+
+📎 [Logger Setup](https://github.com/l3vzNJIT/midterm/blob/main/calculator/utils/logger.py)
 
 ---
 
-## 4. Design Patterns Used
+## 5. Design Patterns Used
 
-| Pattern        | Example                                                                 |
-|----------------|-------------------------------------------------------------------------|
-| Command        | Encapsulates CLI operations                                             |
-| Factory        | `Invoker` dynamically instantiates and routes commands                  |
-| Strategy       | Plugins define their own `scope` and `execute` methods                  |
-| Facade         | `HistoryManager` abstracts CSV and pandas logic                         |
-| Singleton      | `logger` configuration is centralized and reused                        |
+This project makes use of several well-known design patterns:
 
----
-
-## 5. History Management with Pandas
-
-- Stores up to 5 recent calculations in a CSV file.
-- Automatically loads on startup and saves on exit or history modification.
-- Uses Pandas for efficient data reading/writing.
-
-📎 [CSV Logic](https://github.com/l3vzNJIT/midterm/blob/master/calculator/history/history_manager.py)
+- **Command Pattern** is used for plugin commands to encapsulate each operation and allow easy extension.
+- **Factory Behavior** emerges in the `Invoker`, which instantiates and invokes the appropriate command dynamically.
+- **Strategy Pattern** is used as each command encapsulates a distinct behavior for interpreting and executing user input.
+- **Facade Pattern** is evident in the `HistoryManager`, which wraps complex file I/O and pandas logic behind a simple interface.
+- **Singleton Pattern** is approximated in the `logger`, ensuring consistent configuration across all modules.
 
 ---
 
-## 6. Configuration with Environment Variables
+## 6. History Management with Pandas
 
-- CSV path, max history size, and logging config are managed via a `.env` file.
-- Avoids hardcoded paths and allows flexible deployment.
+The `HistoryManager` module is responsible for persisting and restoring calculation history using CSV files. On startup, the history is loaded into memory using a pandas DataFrame. As new calculations are added, the system ensures that only a fixed number (typically 5) are retained. When the program exits or when specific commands modify history, it is written back to disk. This use of pandas allows for efficient, structured data manipulation and minimizes boilerplate file handling logic.
 
-📎 [Env Settings](https://github.com/l3vzNJIT/midterm/blob/master/calculator/config/settings.py)
-
----
-
-## 7. Logging
-
-- Uses Python’s built-in `logging` module.
-- Logs errors, file I/O, command executions, and more.
-- Can switch verbosity via `.env` config.
-
-📎 [Logging Config](https://github.com/l3vzNJIT/midterm/blob/master/calculator/utils/logger.py)
+📎 [CSV History Handling](https://github.com/l3vzNJIT/midterm/blob/main/calculator/history/history_manager.py)
 
 ---
 
-## 8. Exception Handling
+## 7. Configuration with Environment Variables
 
-- EAFP style used when reading files or routing user input.
-- LBYL used when verifying file paths or directory existence.
+All configurable runtime options are managed through a `.env` file, which is read by `settings.py`. This includes:
+- Path to the CSV file storing command history.
+- Logging verbosity level.
+- Limits on number of stored calculations.
 
-📎 [LBYL Example](https://github.com/l3vzNJIT/midterm/blob/master/calculator/history/history_manager.py#L36)  
-📎 [EAFP Example](https://github.com/l3vzNJIT/midterm/blob/master/calculator/main.py#L18)
+Using environment variables follows the 12-factor app methodology, improving portability, separation of config from code, and ease of deployment across environments.
 
----
-
-## 9. Testing and CI/CD
-
-- Tests written using `pytest`.
-- GitHub Actions run tests automatically.
-- Goal is 90%+ code coverage.
-
-📎 [Tests](https://github.com/l3vzNJIT/midterm/tree/master/tests)  
-📎 [GitHub Actions Workflow](https://github.com/l3vzNJIT/midterm/blob/master/.github/workflows/test.yml)
+📎 [Environment Settings](https://github.com/l3vzNJIT/midterm/blob/main/calculator/config/settings.py)
 
 ---
 
-## 10. Commit History
+## 8. Logging
 
-Commits reflect:
-- Incremental feature development
-- Bug fixes and refactoring
-- Integrated test creation
+The application uses Python’s built-in `logging` library for structured and configurable logging. Logging is initialized on startup and all internal operations—including command execution, file access, and exceptions—are logged at appropriate levels. This provides valuable insight into the application’s behavior and facilitates debugging without relying on `print()` statements.
 
-📎 [Commit History](https://github.com/l3vzNJIT/midterm/commits/master)
+📎 [Logging Setup](https://github.com/l3vzNJIT/midterm/blob/main/calculator/utils/logger.py)
 
 ---
 
-## 11. Submission Checklist
+## 9. Exception Handling (EAFP and LBYL)
+
+This project combines the EAFP (Easier to Ask Forgiveness than Permission) and LBYL (Look Before You Leap) paradigms:
+- **EAFP** is used when executing user commands and accessing data that may or may not exist.
+- **LBYL** is used when checking for file paths, directory existence, and configuration validity.
+
+This dual approach makes the code both Pythonic and robust.
+
+📎 [LBYL Example](https://github.com/l3vzNJIT/midterm/blob/main/calculator/history/history_manager.py#L36)  
+📎 [EAFP Example](https://github.com/l3vzNJIT/midterm/blob/main/calculator/main.py#L18)
+
+---
+
+## 10. Testing and CI/CD
+
+Unit tests are written using `pytest` and stored in the `tests/` directory. These cover both command logic and file I/O operations. GitHub Actions is configured to run tests automatically on every push, ensuring continuous integration and safeguarding code quality.
+
+📎 [Test Suite](https://github.com/l3vzNJIT/midterm/tree/main/tests)  
+📎 [CI Workflow](https://github.com/l3vzNJIT/midterm/blob/main/.github/workflows/test.yml)
+
+---
+
+## 11. Commit History and Development Flow
+
+The Git commit history reflects structured and incremental development. Each feature or bug fix is implemented in a focused commit, often accompanied by related test changes. This structured approach to version control improves traceability and collaboration readiness.
+
+📎 [Commit History](https://github.com/l3vzNJIT/midterm/commits/main)
+
+---
+
+## 12. Submission Checklist
 
 | Requirement                           | Complete? |
 |--------------------------------------|-----------|
@@ -197,3 +173,4 @@ Commits reflect:
 | Minimum 90% Test Coverage             | 🔄        |
 | Clean Git Commit History              | ✅        |
 | README with Pattern + Logging Explanation | ✅        |
+
