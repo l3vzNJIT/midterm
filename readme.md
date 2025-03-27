@@ -36,13 +36,13 @@ python calculator/main.py
 
 ## 1. Overview
 
-This project is a command-line calculator written in Python that demonstrates modern software engineering principles and professional coding practices. It features a modular plugin architecture based on the Command design pattern, uses environment variables for configuration, and manages a persistent command history via CSV files using the Pandas library. Logging is used throughout for diagnostics, and error handling adheres to the EAFP and LBYL paradigms. The project is structured with testability in mind and supports continuous integration via GitHub Actions.
+This project is a command-line calculator written in Python that demonstrates modern software engineering principles and professional coding practices. It features a modular plugin architecture based on the Command design pattern, uses environment variables for configuration, and manages a persistent command history via CSV files using the Pandas library. Logging is used throughout for diagnostics, and error handling adheres to the EAFP and LBYL paradigms. The project is structured with testability in mind and includes GitHub Actions for CI/CD.
 
 ---
 
 ## 2. REPL Command Loop
 
-At the heart of the application is a Read-Eval-Print Loop (REPL), where the user inputs commands that the system interprets and executes. This loop is implemented in `main.py`, which initializes the logging, loads environment configurations, and starts the REPL interface. When a user enters input, it is routed to the `Invoker`, which determines the correct command plugin to handle it. This design allows new commands to be added easily by simply introducing new plugin classes.
+At the heart of the application is a Read-Eval-Print Loop (REPL), where the user inputs commands that the system interprets and executes. This loop is implemented in `main.py`, which initializes the logging, loads environment configurations, and starts the REPL interface. When a user enters input, it is routed to the `Invoker`, which determines the correct command plugin to handle it.
 
 📎 [CLI entry point - main.py](https://github.com/l3vzNJIT/midterm/blob/main/calculator/main.py)
 
@@ -61,29 +61,29 @@ The calculator supports extensible commands via a plugin system using the Comman
 
 ### `Command` Class
 
-This is an abstract base class that defines the contract for all command plugins. It ensures that each plugin implements a `scope` method to determine applicability and an `execute` method to carry out its task. This abstraction allows for consistent plugin behavior and helps maintain a clean and scalable architecture.
+This abstract base class defines the contract for all command plugins. It ensures that each plugin implements a `scope` method to determine applicability and an `execute` method to carry out its task.
 
 ### `Invoker` Class
 
-The `Invoker` class is responsible for orchestrating the command execution process. It dynamically loads all available plugins, evaluates which one should handle the input using their `scope` method, and invokes the corresponding `execute` function. It also manages an internal history of command execution for further functionality like logging and persistence.
+The `Invoker` orchestrates command execution. It loads all available plugins, checks which one should respond to input, and delegates execution accordingly. It also handles the command history.
 
 📎 [Invoker Implementation](https://github.com/l3vzNJIT/midterm/blob/main/calculator/invoker.py)
 
 ### `HistoryManager` Class
 
-The `HistoryManager` handles all interactions with the CSV file where the calculation history is stored. It uses the Pandas library to read and write structured data, and enforces the maximum allowed number of stored calculations. It provides methods to load history on startup, save it on shutdown, and manipulate it during runtime.
+Handles persistence of command history using CSV files and Pandas. It reads history into memory on startup, enforces a 5-entry limit, and saves the history when changes occur.
 
 📎 [HistoryManager](https://github.com/l3vzNJIT/midterm/blob/main/calculator/history/history_manager.py)
 
 ### `settings.py`
 
-This module handles configuration management by loading environment variables from a `.env` file using the `dotenv` package. These configurations control critical runtime parameters such as file paths and logging levels, allowing the application to be portable and environment-agnostic.
+Loads runtime configuration from a `.env` file using the `dotenv` package. This includes CSV path, logging level, and other adjustable parameters.
 
 📎 [Settings](https://github.com/l3vzNJIT/midterm/blob/main/calculator/config/settings.py)
 
 ### `logger.py`
 
-A centralized logging module sets up a consistent logging configuration that can be reused across the entire application. It supports different logging levels (DEBUG, INFO, ERROR) and logs both to the console and to a file, aiding debugging and professional-grade traceability.
+Central logging configuration used across the app. Initializes handlers and formats to ensure logs are clean, searchable, and consistently stored.
 
 📎 [Logger Setup](https://github.com/l3vzNJIT/midterm/blob/main/calculator/utils/logger.py)
 
@@ -91,19 +91,17 @@ A centralized logging module sets up a consistent logging configuration that can
 
 ## 5. Design Patterns Used
 
-This project makes use of several well-known design patterns:
-
-- **Command Pattern** is used for plugin commands to encapsulate each operation and allow easy extension.
-- **Factory Behavior** emerges in the `Invoker`, which instantiates and invokes the appropriate command dynamically.
-- **Strategy Pattern** is used as each command encapsulates a distinct behavior for interpreting and executing user input.
-- **Facade Pattern** is evident in the `HistoryManager`, which wraps complex file I/O and pandas logic behind a simple interface.
-- **Singleton Pattern** is approximated in the `logger`, ensuring consistent configuration across all modules.
+- **Command Pattern**: Encapsulates calculator commands.
+- **Factory Behavior**: `Invoker` routes and instantiates commands.
+- **Strategy Pattern**: Each plugin defines how it handles input and execution.
+- **Facade Pattern**: `HistoryManager` simplifies CSV/pandas operations.
+- **Singleton**: Centralized logging configuration.
 
 ---
 
 ## 6. History Management with Pandas
 
-The `HistoryManager` module is responsible for persisting and restoring calculation history using CSV files. On startup, the history is loaded into memory using a pandas DataFrame. As new calculations are added, the system ensures that only a fixed number (typically 5) are retained. When the program exits or when specific commands modify history, it is written back to disk. This use of pandas allows for efficient, structured data manipulation and minimizes boilerplate file handling logic.
+`HistoryManager` reads and writes structured data to a CSV using Pandas. On startup, it loads previous calculations. If the max size (5) is exceeded, it raises an exception. This ensures performance and manageable memory use.
 
 📎 [CSV History Handling](https://github.com/l3vzNJIT/midterm/blob/main/calculator/history/history_manager.py)
 
@@ -111,12 +109,7 @@ The `HistoryManager` module is responsible for persisting and restoring calculat
 
 ## 7. Configuration with Environment Variables
 
-All configurable runtime options are managed through a `.env` file, which is read by `settings.py`. This includes:
-- Path to the CSV file storing command history.
-- Logging verbosity level.
-- Limits on number of stored calculations.
-
-Using environment variables follows the 12-factor app methodology, improving portability, separation of config from code, and ease of deployment across environments.
+`.env` configures file paths, logging level, and history limits. This adheres to the 12-factor app model by externalizing configuration.
 
 📎 [Environment Settings](https://github.com/l3vzNJIT/midterm/blob/main/calculator/config/settings.py)
 
@@ -124,7 +117,7 @@ Using environment variables follows the 12-factor app methodology, improving por
 
 ## 8. Logging
 
-The application uses Python’s built-in `logging` library for structured and configurable logging. Logging is initialized on startup and all internal operations—including command execution, file access, and exceptions—are logged at appropriate levels. This provides valuable insight into the application’s behavior and facilitates debugging without relying on `print()` statements.
+Every part of the application uses structured logging. Instead of `print()`, it logs debug, info, and error messages. This approach supports better diagnostics and CI analysis.
 
 📎 [Logging Setup](https://github.com/l3vzNJIT/midterm/blob/main/calculator/utils/logger.py)
 
@@ -132,11 +125,8 @@ The application uses Python’s built-in `logging` library for structured and co
 
 ## 9. Exception Handling (EAFP and LBYL)
 
-This project combines the EAFP (Easier to Ask Forgiveness than Permission) and LBYL (Look Before You Leap) paradigms:
-- **EAFP** is used when executing user commands and accessing data that may or may not exist.
-- **LBYL** is used when checking for file paths, directory existence, and configuration validity.
-
-This dual approach makes the code both Pythonic and robust.
+- **EAFP**: Try executing risky operations, and handle errors if they occur.
+- **LBYL**: Check for file paths or directory existence beforehand.
 
 📎 [LBYL Example](https://github.com/l3vzNJIT/midterm/blob/main/calculator/history/history_manager.py#L36)  
 📎 [EAFP Example](https://github.com/l3vzNJIT/midterm/blob/main/calculator/main.py#L18)
@@ -145,16 +135,16 @@ This dual approach makes the code both Pythonic and robust.
 
 ## 10. Testing and CI/CD
 
-Unit tests are written using `pytest` and stored in the `tests/` directory. These cover both command logic and file I/O operations. GitHub Actions is configured to run tests automatically on every push, ensuring continuous integration and safeguarding code quality.
+The `tests/` directory includes unit tests that verify functionality across plugins and file handling. GitHub Actions is set up to automatically run tests on push.
 
 📎 [Test Suite](https://github.com/l3vzNJIT/midterm/tree/main/tests)  
-📎 [CI Workflow](https://github.com/l3vzNJIT/midterm/blob/main/.github/workflows/test.yml)
+📎 [GitHub Actions Workflow](https://github.com/l3vzNJIT/midterm/blob/main/.github/workflows/test.yml)
 
 ---
 
 ## 11. Commit History and Development Flow
 
-The Git commit history reflects structured and incremental development. Each feature or bug fix is implemented in a focused commit, often accompanied by related test changes. This structured approach to version control improves traceability and collaboration readiness.
+Commits follow a structured flow: each change adds a logical piece of functionality, typically including relevant tests and doc updates. This enables traceable, auditable history.
 
 📎 [Commit History](https://github.com/l3vzNJIT/midterm/commits/main)
 
@@ -173,4 +163,3 @@ The Git commit history reflects structured and incremental development. Each fea
 | Minimum 90% Test Coverage             | 🔄        |
 | Clean Git Commit History              | ✅        |
 | README with Pattern + Logging Explanation | ✅        |
-
