@@ -25,7 +25,6 @@ python calculator/main.py
 
 # Detailed paper with cited examples in the code
 
----
 
 ## 1. Overview
 
@@ -33,13 +32,31 @@ This project implements a command-line calculator in Python, with a focus on pro
 
 ---
 
-## 2. REPL Command Loop
+## 2. Summary of Software Engineering Principles Demonstrated
+
+The Python Calculator demonstrates practical application of several core software engineering principles and industry-standard tools. It integrates object-oriented design patterns, system configuration best practices, and a strong focus on test-driven development to ensure maintainability, extensibility, and robustness.
+
+First, the codebase effectively implements the **Command design pattern**. This pattern decouples the execution of specific commands from the REPL loop. Each user input is parsed and routed through the `Invoker`, which scans available plugin commands and dispatches the one whose `scope()` method matches the input. Each command plugin implements an `execute()` method that carries out the actual logic. This separation of responsibility enables easy addition of new features — for example, arithmetic operations like `add`, `subtract`, and `divide` are self-contained Python modules in their respective directories.
+
+The **plugin architecture** further reinforces extensibility and modularity. Commands are dynamically discovered and do not require changes to the core application when new capabilities are introduced. Each resides in its own namespace under `calculator/commands`, keeping logic well-organized. The command dispatcher (`invoker.py`) simply iterates over loaded commands and invokes the appropriate one based on input, embodying both the Strategy and Factory design patterns.
+
+The **REPL (Read-Eval-Print Loop)** pattern is central to the user interface. Implemented in `main.py`, it provides an interactive loop that continuously reads user input, passes it through parsing, routes it to the command logic, and prints output. This structure makes the application intuitive to use while maintaining a clean control flow.
+
+The project also emphasizes the use of **standard tools**. Logging is configured with Python’s built-in `logging` module and defined in a reusable `logging.conf` file. System configuration is handled using environment variables loaded by the `python-dotenv` package, following 12-factor app practices. This allows seamless changes to file paths or logging verbosity without modifying source code.
+
+**Test-driven development (TDD)** is a cornerstone of the project. A comprehensive suite of unit tests in the `tests/` folder validates each plugin and utility. For example, the `history_print` plugin is tested for its ability to correctly load and display historical command usage. The CI/CD pipeline, defined in `.github/workflows/python-app.yml`, automatically runs these tests on every push, ensuring that no regressions are introduced. The `.coveragerc` file and test coverage tools enforce measurable quality.
+
+By combining design patterns, standard tooling, configuration management, and automated testing, this project models real-world software engineering practices. It is not only a calculator but a template for how professional Python applications should be built and maintained.
+
+---
+
+## 3. REPL Command Loop
 
 The REPL loop is initiated by [`main.py`](https://github.com/l3vzNJIT/midterm/blob/master/calculator/main.py). This script handles environment setup, initializes logging based on the `logging.conf` file, and starts the main input loop. User inputs are passed to the `Invoker` class to determine the appropriate plugin for execution.
 
 ---
 
-## 3. Plugin System and Command Pattern
+## 4. Plugin System and Command Pattern
 
 The `Command` interface defined in [`command.py`](https://github.com/l3vzNJIT/midterm/blob/master/calculator/command.py) serves as the contract for all commands. Each plugin must implement the `scope()` method to determine if it can handle the input, and `execute()` to perform the operation.
 
@@ -57,7 +74,7 @@ History-related plugins include:
 
 ---
 
-## 4. Class Responsibilities
+## 5. Class Responsibilities
 
 ### `Invoker`
 Defined in [`invoker.py`](https://github.com/l3vzNJIT/midterm/blob/master/calculator/invoker.py), this class scans the command directory at runtime and loads available command classes. It calls `scope()` on each to determine the right command for a given input. This modular approach enables extensibility without modifying the REPL core.
@@ -75,7 +92,7 @@ Logging is initialized in `main.py` and configured using [`logging.conf`](https:
 
 ---
 
-## 5. Environment Configuration
+## 6. Environment Configuration
 
 Runtime environment setup is handled by:
 - [`setup_env.py`](https://github.com/l3vzNJIT/midterm/blob/master/calculator/setup_env.py): Loads environment variables and prepares paths for logging and history persistence.
@@ -86,7 +103,7 @@ This enables flexible configuration across environments and supports practices l
 
 ---
 
-## 6. Design Patterns in Use
+## 7. Design Patterns in Use
 
 - **Command Pattern**: Each plugin follows a consistent interface, simplifying dispatch.
 - **Factory Pattern**: The `Invoker` behaves like a factory for selecting and executing commands.
@@ -95,7 +112,7 @@ This enables flexible configuration across environments and supports practices l
 
 ---
 
-## 7. Exception Handling
+## 8. Exception Handling
 
 The code adheres to both:
 - **EAFP (Easier to Ask Forgiveness than Permission)**: Most plugin operations attempt actions (like file reads) and catch exceptions.
@@ -107,7 +124,7 @@ Examples:
 
 ---
 
-## 8. Testing and CI/CD
+## 9. Testing and CI/CD
 
 The project includes full automated testing:
 - [`tests/`](https://github.com/l3vzNJIT/midterm/tree/master/tests): Unit tests for all plugin commands and shared logic
@@ -118,13 +135,13 @@ The project includes full automated testing:
 
 ---
 
-## 9. Commit History and Practices
+## 10. Commit History and Practices
 
 The [commit history](https://github.com/l3vzNJIT/midterm/commits/master) reflects proper use of Git. Each commit is feature-focused and contains logical changes: adding new commands, improving test coverage, fixing edge case bugs, and organizing the file structure. This auditability is important for collaborative work and continuous integration.
 
 ---
 
-## 10. Submission Checklist
+## 11. Submission Checklist
 
 | Requirement                                | Complete? |
 |-------------------------------------------|-----------|
@@ -137,4 +154,3 @@ The [commit history](https://github.com/l3vzNJIT/midterm/commits/master) reflect
 | 90%+ Test Coverage                        | 🔄        |
 | Clean Commit History                      | ✅        |
 | README and Technical Explanation          | ✅        |
-
