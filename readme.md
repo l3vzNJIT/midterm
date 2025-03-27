@@ -25,6 +25,7 @@ python calculator/main.py
 # Detailed Documentation with Reference Links
 
 
+
 # Midterm Project: Advanced Python Calculator
 **Author:** Lev Zelenin  
 **Course:** Web Systems Programming – Spring 2025  
@@ -68,30 +69,43 @@ This project is a command-line calculator application built using modern profess
 
 ## 3. Code Structure and Class Responsibilities
 
-### `Command` Interface
-Defines the contract for all commands:
-- `scope(self, user_input)`: Determines whether the command should handle the input.
-- `execute(self, user_input)`: Executes the command’s logic.
+### `Command` (Abstract Base Class)
+Defines the contract for all command plugins with:
+- `scope(self, user_input)`: Checks if the command should respond to the given input.
+- `execute(self, user_input)`: Executes the command logic.
 
 ### `Invoker`
-Routes user input to the appropriate plugin based on the `scope` method.
-Maintains command history in memory and in CSV.
+Acts as the controller of the application. Responsibilities include:
+- Scanning and loading command plugins dynamically.
+- Determining which plugin should handle a given input.
+- Delegating execution to the appropriate command.
+- Maintaining an internal history of executed commands.
 
-📎 [Invoker](https://github.com/l3vzNJIT/midterm/blob/master/calculator/invoker/invoker.py)
+📎 [Invoker](https://github.com/l3vzNJIT/midterm/blob/master/calculator/invoker.py)
 
 ### `HistoryManager`
-Encapsulates CSV file operations using Pandas. Supports loading and saving calculation history.
-Handles serialization and deserialization of calculation objects.
+Responsible for reading and writing calculation history to a CSV file.
+- Loads history using pandas on startup.
+- Saves new entries upon command execution.
+- Enforces maximum history size (e.g., 5 items).
+- Uses pandas DataFrame for in-memory manipulation.
 
 📎 [HistoryManager](https://github.com/l3vzNJIT/midterm/blob/master/calculator/history/history_manager.py)
 
 ### `settings.py`
-Loads and exposes environment variables (via `dotenv`) for paths, limits, and log configuration.
+Manages configuration using environment variables via `dotenv`.  
+It defines:
+- Paths to history file
+- Logging level
+- Other operational parameters
 
 📎 [Settings](https://github.com/l3vzNJIT/midterm/blob/master/calculator/config/settings.py)
 
 ### `logger.py`
-Sets up application-wide logging. Ensures that all logs are recorded in a consistent format and location.
+Central logging configuration. Provides:
+- Formatter and handlers
+- Console and file output
+- Configurable verbosity via `.env`
 
 📎 [Logger](https://github.com/l3vzNJIT/midterm/blob/master/calculator/utils/logger.py)
 
@@ -159,7 +173,7 @@ Sets up application-wide logging. Ensures that all logs are recorded in a consis
 
 ---
 
-## 11. Commit History
+## 10. Commit History
 
 Commits reflect:
 - Incremental feature development
@@ -170,7 +184,7 @@ Commits reflect:
 
 ---
 
-## 12. Submission Checklist
+## 11. Submission Checklist
 
 | Requirement                           | Complete? |
 |--------------------------------------|-----------|
@@ -179,7 +193,6 @@ Commits reflect:
 | Environment Variable Usage            | ✅        |
 | Logging Implementation                | ✅        |
 | LBYL + EAFP Handling                  | ✅        |
-| 3–5 Min Demo Video                    | 🔲        |
 | GitHub Actions Integration            | ✅        |
 | Minimum 90% Test Coverage             | 🔄        |
 | Clean Git Commit History              | ✅        |
